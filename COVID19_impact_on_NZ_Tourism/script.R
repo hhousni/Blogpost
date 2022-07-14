@@ -1,6 +1,4 @@
 library(readxl)
-library(dplyr)
-library(ggplot2)
 library(scales)
 library(lubridate)
 library(grid)
@@ -80,8 +78,20 @@ ggplot(data = emplViz, aes (x = Year, y = AnnualGrowthRate, fill = EmployementTy
   geom_bar(stat = "identity", position = position_dodge()) +
   geom_text(aes(label=AnnualGrowthRate),color="black",hjust = 1, position = position_dodge(0.9), size=3.5) +
   scale_fill_brewer(palette = "Paired") +
-  theme_minimal() +
+  labs(title = "Direct and indirect tourism employment New Zealand",
+       subtitle = "Year over year growth",
+       caption = "Data source: Stats NZ",
+       fill = "Employement Type") +
+  theme(plot.title = element_text(colour = "#3d4f6e",size = 18,vjust = 10),
+        plot.subtitle = element_text(colour = "#808080",size = 14, vjust = 10),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        plot.margin = margin(2, 0.5, 0.5, 0.5, "cm")) + 
+  scale_x_reverse() +
   coord_flip()
+
+#96d6ba
+
 
 
 ##### 3 Domestic expenditure #####
