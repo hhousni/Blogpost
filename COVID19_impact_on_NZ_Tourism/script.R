@@ -29,10 +29,19 @@ intArrivalClean1 <- intArrivalClean0 %>%
 intArrivalClean1$Year <- factor(intArrivalClean1$Year)
 
 ggplot() +
-  geom_line(data = intArrivalClean1, aes (x = Month, y = SeasonallyAdjusted, color = Year)) + 
+  geom_line(data = intArrivalClean1, aes (x = Month, y = SeasonallyAdjusted, color = Year, alpha = Year),lwd=1.5)+
+  scale_alpha_manual(values=c(0.2,0.2,0.2,0.2,1)) +
+  theme(axis.title.x = element_blank()) +
+  labs (title = "Visitor arrivals",
+        subtitle = "2018-2022") +
   scale_y_continuous(name = "Visitor Arrival",limits = c(0,400000),labels = comma) +
   scale_x_continuous( breaks = seq_along(month.name),
-                      labels = month.name) 
+                      labels = month.name) +
+  theme_bw() +
+    theme(plot.title = element_text(colour = "#3d4f6e",size = 24,vjust = 10, hjust = 0.5),
+          plot.subtitle = element_text(colour = "#808080",size = 18, vjust = 10, hjust =0.5),
+          plot.margin = margin(2, 0.5, 0.5, 0.5, "cm"),
+          axis.title.x = element_blank())
 
 
  # annotate("segment", x = 2, y = 275000, yend = 274000, xend = 2,15
@@ -76,16 +85,21 @@ emplViz <- employment1 %>%
 
 ggplot(data = emplViz, aes (x = Year, y = AnnualGrowthRate, fill = EmployementType )) +
   geom_bar(stat = "identity", position = position_dodge()) +
-  geom_text(aes(label=AnnualGrowthRate),color="black",hjust = 1, position = position_dodge(0.9), size=3.5) +
+  geom_text(aes(y=AnnualGrowthRate+sign(AnnualGrowthRate),label=AnnualGrowthRate),position = position_dodge(0.9), size=3.5) +
   scale_fill_brewer(palette = "Paired") +
-  labs(title = "Direct and indirect tourism employment New Zealand",
-       subtitle = "Year over year growth",
+  labs(title = "Tourism employment in New Zealand",
+       subtitle = "Year over year growth (2018-2021)",
        caption = "Data source: Stats NZ",
-       fill = "Employement Type") +
-  theme(plot.title = element_text(colour = "#3d4f6e",size = 18,vjust = 10),
-        plot.subtitle = element_text(colour = "#808080",size = 14, vjust = 10),
+       fill = "") +
+  theme_bw() +
+  theme(plot.title = element_text(colour = "#3d4f6e",size = 24,vjust = 10, hjust = 0.5),
+        plot.subtitle = element_text(colour = "#808080",size = 18, vjust = 10, hjust =0.5),
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
+        legend.direction = "horizontal",
+        legend.position = c(0.5, 0.91),
+        legend.text = element_text(size = 12,margin = margin(r = 1, unit = 'cm')),
+        legend.key.size = unit(0.5, "cm"),
         plot.margin = margin(2, 0.5, 0.5, 0.5, "cm")) + 
   scale_x_reverse() +
   coord_flip()
