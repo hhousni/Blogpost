@@ -10,7 +10,7 @@ intArrival <- read_excel("COVID19_impact_on_NZ_Tourism/RawData/InternationaArriv
 
 
 # data prep 
-intArrivalClean0 <- as.data.frame(intArrival[2:149,])
+intArrivalClean0 <- as.data.frame(intArrival[2:150,])
 names(intArrivalClean0) <- c("date","seasonallyAdjusted","trend")
 intArrivalClean0$date <- as.Date(paste(intArrivalClean0$date, "01", sep = "-"), "%YM%m-%d")
 intArrivalClean0$date <- as.POSIXct(intArrivalClean0$date)
@@ -43,13 +43,6 @@ ggplot() +
           plot.margin = margin(2, 0.5, 0.5, 0.5, "cm"),
           axis.title.x = element_blank())
 
-
- # annotate("segment", x = 2, y = 275000, yend = 274000, xend = 2,15
-  #         color = "blue", size = 2, arrow = arrow()) +
-  #annotate("text", x = 2,275000,
-   #        label = "This Job is mine",
-    #       col = "black",
-     #      size = 5)
 
 ########### graphe 2 employment market######
 
@@ -104,12 +97,47 @@ ggplot(data = emplViz, aes (x = Year, y = AnnualGrowthRate, fill = EmployementTy
   scale_x_reverse() +
   coord_flip()
 
-#96d6ba
+
 
 
 
 ##### 3 Domestic expenditure #####
+expenditure0 <- read_excel("COVID19_impact_on_NZ_Tourism/RawData/expenditure.xlsx")
+
+expenditure <- expenditure0 %>%
+  mutate(Domestic = as.numeric(Domestic),
+         International = as.numeric(International),
+         Total = as.numeric(Total)) %>% 
+  mutate(DomesticGRT = round((Domestic- lag(Domestic))/lag(Domestic)*100, digits = 2),
+         InternationalGRT = round((International- lag(International))/lag(International)*100, digits = 2),
+         TotalGRT = round((Total- lag(Total))/lag(Total)*100, digits = 2))
   
+
+expenditureGRT <-  expenditure %>% 
+  select(Year, DomesticGRT, InternationalGRT, TotalGRT) %>%
+  rename(Domestic = DomesticGRT , International = InternationalGRT, Total = TotalGRT) +
+  gather(Domestic, Domestic, Total,key = TypeOfTourist, value = ExpenditureYOYGRT) %>%
+  filter( Year %in% c(2015:2022), TypeOfTourist %in% c("Domestic","International")) 
+
+
+ggplot(data = expenditureGRT, aes(x = Year, y = ExpenditureYOYGRT, fill = TypeOfTourist)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  labs(title = "Annual growth of travel expenditure by tourist type",
+       subtitle = "From 2015 to 2021",
+       caption = "Data source: Stats NZ",
+       fill = "") +
+  theme_bw() +
+  theme(plot.title = element_text(colour = "#3d4f6e",size = 24,vjust = 10, hjust = 0.5),
+        plot.subtitle = element_text(colour = "#808080",size = 18, vjust = 10, hjust =0.5),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        legend.direction = "horizontal",
+        legend.position = c(0.5, 1.035),
+        legend.text = element_text(size = 12,margin = margin(r = 1, unit = 'cm')),
+        legend.key.size = unit(0.5, "cm"),
+        plot.margin = margin(2, 0.5, 0.5, 0.5, "cm"))
+
+
 
 
 
